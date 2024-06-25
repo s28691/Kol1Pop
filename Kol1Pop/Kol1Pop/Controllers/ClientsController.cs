@@ -27,11 +27,11 @@ public class ClientsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> AddClientWithRental(AddClientWithRentalDTO clientWithRentalDto)
     {
-        if (!await _dbService.DoesCarExist(clientWithRentalDto.rent.carId))
+        if (!await _dbService.DoesCarExist(clientWithRentalDto.carId))
         {
             return NotFound("Car with given id does not exist!");
         }
         await _dbService.AddClientWithCar(clientWithRentalDto);
-        return Created();
+        return Created(Request.Path.Value ?? "api/clients", clientWithRentalDto);
     }
 }

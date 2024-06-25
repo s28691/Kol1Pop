@@ -3,9 +3,9 @@
 public class ClientWithRentalsDTO
 {
     public int id { get; set; }
-    public string firstname { get; set; }
-    public string lastName { get; set; }
-    public string address { get; set; }
+    public string firstname { get; set; } 
+    public string lastName { get; set; } 
+    public string address { get; set; } 
     public List<RentalDTO> rentals { get; set; }
 }
 

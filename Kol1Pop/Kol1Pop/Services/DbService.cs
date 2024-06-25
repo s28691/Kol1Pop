@@ -78,7 +78,6 @@ public class DbService : IDbService
         var totaPriceOrdinal = reader.GetOrdinal("TotalPrice");
 
         ClientWithRentalsDTO clientWithRentalsDto = null;
-
         while (await reader.ReadAsync())
         {
             if (clientWithRentalsDto is not null)
@@ -103,15 +102,15 @@ public class DbService : IDbService
                     address = reader.GetString(addressOrdinal),
                     rentals = new List<RentalDTO>()
                     {
-                      new RentalDTO()
-                      {
-                          vin = reader.GetString(vinOrdinal),
-                          color = reader.GetString(colorOrdinal),
-                          model = reader.GetString(modelOrdinal),
-                          dateFrom = reader.GetDateTime(dateFromOrdinal),
-                          dateTo = reader.GetDateTime(dateToOrdinal),
-                          totalPrice = reader.GetInt32(totaPriceOrdinal) 
-                      }  
+                        new RentalDTO()
+                        {
+                            vin = reader.GetString(vinOrdinal),
+                            color = reader.GetString(colorOrdinal),
+                            model = reader.GetString(modelOrdinal),
+                            dateFrom = reader.GetDateTime(dateFromOrdinal),
+                            dateTo = reader.GetDateTime(dateToOrdinal),
+                            totalPrice = reader.GetInt32(totaPriceOrdinal) 
+                        }  
                     }
                 };
             }
@@ -131,31 +130,26 @@ public class DbService : IDbService
         command.Connection = connection;
         command.CommandText = query;
 	    
-        command.Parameters.AddWithValue("@FirstName", clientWithRentalDto.firstName);
-        command.Parameters.AddWithValue("@LastName", clientWithRentalDto.lastName);
-        command.Parameters.AddWithValue("@Address", clientWithRentalDto.Address);
+        command.Parameters.AddWithValue("@FirstName", clientWithRentalDto.client.firstName);
+        command.Parameters.AddWithValue("@LastName", clientWithRentalDto.client.lastName);
+        command.Parameters.AddWithValue("@Address", clientWithRentalDto.client.Address);
 
         await connection.OpenAsync();
 
         var transaction = await connection.BeginTransactionAsync();
         command.Transaction = transaction as SqlTransaction;
-
-        try
-        {
-            var id = await command.ExecuteScalarAsync();
-            var query2 = @"INSERT INTO car_rentals VALUES(@id, @carId, @DateFrom, @DateTo, @TotalPrice)";
-            command.Parameters.AddWithValue("@id", id);
-            command.Parameters.AddWithValue("@carId",clientWithRentalDto.rent.carId);
-            command.Parameters.AddWithValue("@DateFrom", clientWithRentalDto.rent.dateFrom);
-            command.Parameters.AddWithValue("@DateTo", clientWithRentalDto.rent.dateTo);
-            var totalPrice = (clientWithRentalDto.rent.dateFrom - clientWithRentalDto.rent.dateTo).Days > 20 ? 600 : 300;
-            command.Parameters.AddWithValue("@TotalPrice", totalPrice);
-            await command.ExecuteNonQueryAsync();
-            await transaction.CommitAsync();
-        }catch (Exception)
-        {
-            await transaction.RollbackAsync();
-            throw;
-        }
+        
+        var id = await command.ExecuteScalarAsync();
+        command.Parameters.Clear();
+        command.CommandText = @"INSERT INTO car_rentals(ClientID, CarID, DateFROM, DateTo, TotalPrice) VALUES(@ClientId, @carId, @DateFrom, @DateTo, @TotalPrice)";
+        command.Parameters.AddWithValue("@ClientId", id);
+        command.Parameters.AddWithValue("@carId",clientWithRentalDto.carId);
+        command.Parameters.AddWithValue("@DateFrom", clientWithRentalDto.dateFrom);
+        command.Parameters.AddWithValue("@DateTo", clientWithRentalDto.dateTo);
+        int totalPrice = (clientWithRentalDto.dateTo - clientWithRentalDto.dateFrom).Days > 20 ? 600 : 300;
+        command.Parameters.AddWithValue("@TotalPrice", totalPrice);
+        await command.ExecuteNonQueryAsync();
+        await transaction.CommitAsync();
+      
     }
 }
