@@ -1,4 +1,5 @@
-﻿using Kol1Pop.Services;
+﻿using Kol1Pop.DTO;
+using Kol1Pop.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Kol1Pop.Controllers;
@@ -22,6 +23,15 @@ public class ClientsController : ControllerBase
         var result = await _dbService.GetClientWithRentals(id);
         return Ok(result);
     }
+
     [HttpPost]
-    public async Task<IActionResult> AddClientWithRental(Add)
+    public async Task<IActionResult> AddClientWithRental(AddClientWithRentalDTO clientWithRentalDto)
+    {
+        if (!await _dbService.DoesCarExist(clientWithRentalDto.rent.carId))
+        {
+            return NotFound("Car with given id does not exist!");
+        }
+        await _dbService.AddClientWithCar(clientWithRentalDto);
+        return Created();
+    }
 }

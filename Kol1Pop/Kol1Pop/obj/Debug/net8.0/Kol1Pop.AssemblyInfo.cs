@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Kol1Pop")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c0fb3cd4b2d245ccf47ebc7e138bb501f7455067")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e70819bd09bad3439dce97621e30a7bafd7f3a35")]
 [assembly: System.Reflection.AssemblyProductAttribute("Kol1Pop")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Kol1Pop")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
